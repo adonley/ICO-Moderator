@@ -5,6 +5,7 @@
 # Logging
 /log/*
 
+.idea
 
 ### SublimeText template
 # cache files for sublime text

@@ -1,6 +1,6 @@
 {
-  "name": "Aether United Discord Bot",
-  "description": "A bot for Aether United's Discord channel.",
+  "name": "UnikrnBot",
+  "description": "",
   "image": "heroku/python",
   "keywords": ["python", "discord" ],
   "addons": ["heroku-config"]

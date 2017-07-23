@@ -36,12 +36,12 @@ class Admin(util.Listener):
     async def on_message(self, msg: discord.Message):
         if re.match(r'!mute', msg.content):
             for user in msg.mentions:
-                await self.client.send_message(msg.channel, '%s has been banned from using AUNBot!' % user.mention)
+                await self.client.send_message(msg.channel, '%s has been banned from using this bot!' % user.mention)
                 self.registry.muted.append(user)
                 self.logger.debug('Added %s to banned, current list %s', user.name, self.registry.muted)
         elif re.match(r'!unmute', msg.content):
             for user in msg.mentions:
-                await self.client.send_message(msg.channel, '%s is now allowed to use AUNBot!' % user.mention)
+                await self.client.send_message(msg.channel, '%s is now allowed to use this bot!' % user.mention)
                 self.registry.muted.remove(user)
                 self.logger.debug('Removed %s from banned, current list: %s', user.name, self.registry.muted)
 
