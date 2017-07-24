@@ -11,7 +11,6 @@ import resources
 
 @util.listenerfinder.register
 class Admin(util.Listener):
-
     def __init__(self):
         super().__init__()
         self.logger = logging.getLogger('admincmd')
@@ -48,7 +47,6 @@ class Admin(util.Listener):
 
 @util.listenerfinder.register
 class Help(util.Listener):
-
     def is_triggered_private_message(self, msg: discord.Message):
         return re.match(r'help', msg.content)
 
