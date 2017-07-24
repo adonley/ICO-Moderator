@@ -8,40 +8,24 @@ import util
 
 REDIRECT_LAYERS = 3
 URL_REGEX = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-URL_SOURCE = 'https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/urls-darklist.json'
 UPDATE_PERIOD = 3600  # Every hour
 
 log = logging.getLogger(__name__)
-
-
-@util.listenerfinder.register
-class GetUrlsTask(util.ScheduledTask):
-
-    blacklist = []
-
-    async def task(self):
-        while True:
-            log.info('updating url blacklist...')
-            response = requests.get(URL_SOURCE)
-            content = response.content.decode()
-            GetUrlsTask.blacklist = re.findall(r'"id": ?"(.+)"', content)  # because it errors with proper json.loads...
-            log.debug('updated blacklist: ', GetUrlsTask.blacklist)
-            await asyncio.sleep(UPDATE_PERIOD)
+moderator_roles = ['moderator', 'unikrn staff', 'unikrn admin']
 
 
 @util.listenerfinder.register
 class URLModerator(util.Listener):
-
     def is_triggered_message(self, msg: discord.Message):
         should_delete = True
         if not re.match(URL_REGEX, msg.content):
+            log.warn("regular expression did not match")
             should_delete = False
         else:
+            log.warn("regular expression matched")
             for role in msg.author.roles:
-                log.debug("Role: " + role)
-                if role.name.lower() == 'moderator' \
-                        or role.name.lower() == 'unikrn staff' \
-                        or role.name.lower() == 'unikrn admin':
+                log.warn("Role: " + role)
+                if role.name.lower() in moderator_roles:
                     should_delete = False
         return should_delete
 
