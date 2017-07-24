@@ -11,7 +11,7 @@ URL_REGEX2 = re.compile(r"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,‌​3
 
 log = logging.getLogger(__name__)
 moderator_roles = ['moderator', 'unikrn staff', 'unikrn admin']
-DELETE_TIME = 25
+DELETE_TIME = 4
 
 
 @util.listenerfinder.register
