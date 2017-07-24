@@ -33,38 +33,22 @@ class GetUrlsTask(util.ScheduledTask):
 class URLModerator(util.Listener):
 
     def is_triggered_message(self, msg: discord.Message):
-        # Cursory scan
-        for blacklist_url in GetUrlsTask.blacklist:
-            if re.search(r'\b{}\b'.format(blacklist_url), msg.content, flags=re.IGNORECASE):
-                log.info('detected scam URL (%s) in message, deleting %s', blacklist_url, msg.content)
-                return True
-
-        # Deep scan
-        for match in re.finditer(URL_REGEX, msg.content):
-            url = match.string
-            log.debug('deep scanning url %s', url)
-            for layer in range(0, REDIRECT_LAYERS):
-                try:
-                    redirect = requests.head(url).headers.get('location')
-                    if redirect is None or redirect == url:
-                        log.debug('... %s: does not redirect', layer)
-                        break
-                    if any(blacklist_url in redirect for blacklist_url in GetUrlsTask.blacklist):
-                        log.info('... %s: redirects to %s, a scam url', layer, redirect)
-                        return True
-                    else:
-                        log.debug('... %s: redirects to %s', layer, redirect)
-                        url = redirect
-                except ConnectionError:
-                    log.debug('could not connect to %s, skipping', url)
-                    break
-
-        return False
+        should_delete = True
+        if not re.match(URL_REGEX, msg.content):
+            should_delete = False
+        else:
+            for role in msg.author.roles:
+                log.debug("Role: " + role)
+                if role.name.lower() == 'moderator' \
+                        or role.name.lower() == 'unikrn staff' \
+                        or role.name.lower() == 'unikrn admin':
+                    should_delete = False
+        return should_delete
 
     async def on_message(self, msg: discord.Message):
         await self.client.delete_message(msg)
-        notice = await self.client.send_message(msg.channel, '_A message from {} that contained a suspicious URL was deleted._'.format(msg.author.mention))
-        await asyncio.sleep(10)
+        notice = await self.client.send_message(msg.channel, '_A message from {} that contained a URL was deleted._'.format(msg.author.mention))
+        await asyncio.sleep(15)
         await self.client.delete_message(notice)
         return
 
@@ -74,7 +58,7 @@ class AddressDeletor(util.Listener):
 
     def is_triggered_message(self, msg: discord.Message):
         for role in msg.author.roles:
-            if any(r.name.lower() == 'addressannouncer' for r in msg.author.roles):
+            if any((r.name.lower() == 'moderator' or r.name.lower() == 'unikrn staff') for r in msg.author.roles):
                 log.debug('message from person on crypto address whitelist, not moderating for addresses')
                 return False
         if re.search(r'[0-9a-f]{38,45}', msg.content, flags=re.IGNORECASE):
