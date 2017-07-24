@@ -2,11 +2,8 @@ import logging
 import os
 import re
 import sys
-
 import discord
-
 import util
-import resources
 
 
 @util.listenerfinder.register
