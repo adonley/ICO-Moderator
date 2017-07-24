@@ -21,7 +21,7 @@ class URLModerator(util.Listener):
 
     def is_triggered_message(self, msg: discord.Message):
         should_delete = True
-        if not re.match(URL_REGEX2, msg.content):
+        if not re.match(URL_REGEX2, msg.content) and not re.match(URL_REGEX, msg.content):
             should_delete = False
         else:
             for role in msg.author.roles:
