@@ -12,8 +12,9 @@ URL_REGEX2 = re.compile(r"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,‌​3
 ANY_URL_REGEX = re.compile(r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""")
 WEB_URL_REGEX = re.compile(r"""(?i)\b((?:https?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|top|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b/?(?!@)))""")
 IP_REGEX = re.compile(r"""[0-9]+(?:\.[0-9]+){3}:[0-9]+""")
+STACKOVERFLOW_REGEX = re.compile(r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))''')
 
-REGS = [URL_REGEX, URL_REGEX2, ANY_URL_REGEX, WEB_URL_REGEX, IP_REGEX]
+REGS = [URL_REGEX, URL_REGEX2, ANY_URL_REGEX, WEB_URL_REGEX, IP_REGEX, STACKOVERFLOW_REGEX]
 
 log = logging.getLogger(__name__)
 moderator_roles = ['moderator', 'unikrn staff', 'unikrn admin']
@@ -44,21 +45,24 @@ class URLModerator(util.Listener):
         super().__init__()
 
     def is_triggered_message(self, msg: discord.Message):
-        should_delete = True
+        should_delete = False
 
         for blacklist_url in GetUrlsTask.blacklist:
             if re.search(r'\b{}\b'.format(blacklist_url), msg.content, flags=re.IGNORECASE):
-                return should_delete
+                should_delete = True
 
-        if not any(re.match(r, msg.content) for r in REGS):
-            should_delete = False
-        else:
-            for role in msg.author.roles:
-                if role.name.lower() in moderator_roles:
-                    should_delete = False
+        for reg in REGS:
+            should_delete = should_delete or re.match(reg, msg.content)
+
+        for role in msg.author.roles:
+            if role.name.lower() in moderator_roles:
+                should_delete = False
+
         return should_delete
 
     async def on_message(self, msg: discord.Message):
+        if not msg:
+            return
         await self.client.delete_message(msg)
         notice = await self.client.send_message(msg.channel, '_A message from {} that contained a URL was deleted._'.format(msg.author.mention))
         channels = self.client.get_all_channels()
@@ -67,15 +71,12 @@ class URLModerator(util.Listener):
                 message = '_{} removed message: {}, from channel {} because it contained a link._'.format(msg.author.mention, msg.content, msg.channel.mention)
                 await self.client.send_message(channel, message)
         await asyncio.sleep(DELETE_TIME)
-        await self.client.delete_message(notice)
-        return
+        if notice:
+            await self.client.delete_message(notice)
 
 
 @util.listenerfinder.register
 class AddressDeletor(util.Listener):
-    def __init__(self):
-        super().__init__()
-
     def is_triggered_message(self, msg: discord.Message):
         if any((r.name.lower() in moderator_roles) for r in msg.author.roles):
             return False
@@ -83,7 +84,8 @@ class AddressDeletor(util.Listener):
             return True
 
     async def on_message(self, msg: discord.Message):
-        log.info('detected potential scam address in message, deleting', msg.content)
+        if not msg:
+            return
         await self.client.delete_message(msg)
         notice = await self.client.send_message(msg.channel, '_A message from {} that contained an ethereum address was deleted._'.format(msg.author.mention))
         channels = self.client.get_all_channels()
@@ -93,5 +95,6 @@ class AddressDeletor(util.Listener):
                                                                     msg.channel.mention)
                 await self.client.send_message(channel, '_{} removed message: {}, from channel {} because it contained an Ethereum address._'.format(msg.author.mention, msg.content, msg.channel.mention))
         await asyncio.sleep(DELETE_TIME)
-        await self.client.delete_message(notice)
+        if notice:
+            await self.client.delete_message(notice)
         return
