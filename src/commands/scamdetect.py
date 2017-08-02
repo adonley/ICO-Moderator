@@ -63,7 +63,7 @@ class URLModerator(util.Listener):
             if lower_word.startswith("http:") or lower_word.startswith("https:"):
                 should_delete = True
             for extension in EXTENSTIONS:
-                if lower_word.endswith(extension):
+                if lower_word.endswith("." + extension):
                     should_delete = True
 
         for role in msg.author.roles:
