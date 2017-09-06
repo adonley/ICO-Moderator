@@ -18,8 +18,8 @@ class ListenerRegistry():
         :param admins: the list of admins to use, must be a list of ID's
         """
         self.commands = []
-        self.logger = logging.getLogger('commandreg')
-        self.logger.setLevel(0)
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.WARN)
         self.client = client
         self.admins = admins
         self.muted = []

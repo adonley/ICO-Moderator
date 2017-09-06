@@ -19,7 +19,7 @@ import util
 
 FORMAT = '%(asctime)s - %(name)s:%(module)s:%(lineno)d - %(levelname)s: %(message)s'
 
-main_logger = logging.getLogger(__name__)
+main_logger = logging.getLogger()
 
 
 class IllegalArgumentException(Exception):
@@ -41,37 +41,28 @@ def main():
         args = get_args()
     except IllegalArgumentException:
         print('Not enough arguments. Usage:')
-        print('python3 main.py -ttoken [-lloglevel]')
+        print('python3 main.py -ttoken')
         print('python3 main.py cfgfilelocation')
         print('Put the token in one of the spots above.')
         print('loglevel is a standard Python logging level, where 10 is debug and 50 is error.')
         sys.exit(2)
 
     token = args['token']
-    log_to_file = args.get('l2f', False)
-    loglevel = logging.INFO if 'loglevel' not in args else args['loglevel']
 
     loop = asyncio.get_event_loop()
 
     logging_params = {
-        'level': logging.NOTSET,
+        'level': logging.WARN,
         'format': FORMAT
     }
 
-    if log_to_file:
-        logging_params['filename'] = datetime.date.strftime(datetime.datetime.now(), '../log/aunbot_%Y-%m-%d_%H-%M-%S.log')
-        if not os.path.exists('../log'):
-            os.makedirs('../log')
-
     logging.setLoggerClass(UnicodeLogger)
-
     logging.basicConfig(**logging_params)
-
     formatter = logging.Formatter(fmt=FORMAT)
 
-    console = logging.StreamHandler(sys.stdout)
+    console = logging.StreamHandler(sys.stderr)
     console.setFormatter(formatter)
-    console.setLevel(loglevel)
+    console.setLevel(logging.WARN)
 
     rootlogger = logging.getLogger()
     rootlogger.addHandler(console)
@@ -103,7 +94,7 @@ def main():
     async def on_member_join(member):
         await commandreg.on_member_join(member)
 
-    main_logger.setLevel(logging.DEBUG)
+    main_logger.setLevel(logging.WARN)
     main_logger.info('Received token ' + token)
 
     main_logger.info('Running preload tasks...')

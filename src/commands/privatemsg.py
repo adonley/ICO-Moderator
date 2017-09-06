@@ -10,7 +10,7 @@ import util
 class Admin(util.Listener):
     def __init__(self):
         super().__init__()
-        self.logger = logging.getLogger('admincmd')
+        self.logger = logging.getLogger()
 
     def is_triggered_private_message(self, msg: discord.Message):
         return self.registry.is_admin(msg.author)
