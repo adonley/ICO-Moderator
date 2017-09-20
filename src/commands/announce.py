@@ -7,7 +7,7 @@ import util
 class Timer(util.Listener):
     def __init__(self):
         super().__init__()
-        self._timeout = 25.0 * 60.0
+        self._timeout = 60.0 * 60.0 * 5
         self._announce_channels = ["unikoingold", "random", "crypto-security"]
         self._should_post = dict()
         for chan in self._announce_channels:
