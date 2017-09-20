@@ -3,7 +3,6 @@ Start the bot from here
 """
 
 import asyncio
-import datetime
 import getopt
 import importlib
 import json
@@ -11,13 +10,16 @@ import logging
 import os
 import sys
 import time
+import threading
 
 import discord
 
 import resources
 import util
+from commands import announce
 
 FORMAT = '%(asctime)s - %(name)s:%(module)s:%(lineno)d - %(levelname)s: %(message)s'
+delay = 60.0 * 20.0 # 20 minutes
 
 main_logger = logging.getLogger()
 
@@ -103,7 +105,6 @@ def main():
 
 
 def run_bot():
-
     is_running = True
     while is_running:
 
