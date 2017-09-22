@@ -164,7 +164,7 @@ class AnnounceTimer(util.Listener):
             if channel.name in self._announce_channels:
                 if self._should_post[channel.name]:
                     self._should_post[channel.name] = False
-                    # await self.client.send_message(channel, message)
+                    await self.client.send_message(channel, message)
         await asyncio.sleep(self._timeout)
         await self._job()
 
