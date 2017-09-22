@@ -99,6 +99,10 @@ class URLModerator(util.Listener):
                 if role.name.lower() in moderator_roles:
                     should_delete = False
 
+        # This means it's a bot
+        if not hasattr(msg.author, 'roles'):
+            should_delete = False
+
         return should_delete
 
     async def on_message(self, msg: discord.Message):
