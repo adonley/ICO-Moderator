@@ -10,13 +10,11 @@ import logging
 import os
 import sys
 import time
-import threading
 
 import discord
 
 import resources
 import util
-from commands import announce
 
 FORMAT = '%(asctime)s - %(name)s:%(module)s:%(lineno)d - %(levelname)s: %(message)s'
 delay = 60.0 * 20.0 # 20 minutes
@@ -76,7 +74,7 @@ def main():
 
     commandreg.add_listener(*util.listenerfinder.initialize_discovered())
 
-    main_logger.debug('Bot has %s listeners: %s',
+    main_logger.warning('Bot has %s listeners: %s',
                       len(commandreg.commands),
                       ', '.join(map(lambda l: type(l).__name__, commandreg.commands)))
 

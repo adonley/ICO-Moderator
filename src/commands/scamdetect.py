@@ -29,6 +29,30 @@ URL_SOURCE = 'https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/mas
 UPDATE_PERIOD = 3600  # Every hour
 
 
+
+
+
+@util.listenerfinder.register
+class BanBadNamesTask(util.ScheduledTask):
+    bad_names = ["discord"]
+    async def task(self):
+        while True:
+            for member in list(self.client.get_all_members()):
+                for bad_name in BanBadNamesTask.bad_names:
+                    if bad_name.lower() in member.display_name.lower():
+                        await self.send_to_godwatch(member)
+                        await self.client.ban(member, delete_message_days=1)
+                    pass
+            await asyncio.sleep(15.0)
+
+    async def send_to_godwatch(self, member):
+        for channel in self.client.get_all_channels():
+            if channel.name.lower() == 'godwatch':
+                message = '{} has a display name {} that\'s been matched with abuse. They\'ve been banned.'.format(
+                    member.mention, member.display_name)
+                await self.client.send_message(channel, message)
+
+
 @util.listenerfinder.register
 class GetUrlsTask(util.ScheduledTask):
 
@@ -70,9 +94,10 @@ class URLModerator(util.Listener):
                         and lower_word not in ALLOWED_SITES:
                     should_delete = True
 
-        for role in msg.author.roles:
-            if role.name.lower() in moderator_roles:
-                should_delete = False
+        if msg.author and hasattr(msg.author, 'roles'):
+            for role in msg.author.roles:
+                if role.name.lower() in moderator_roles:
+                    should_delete = False
 
         return should_delete
 
@@ -107,10 +132,42 @@ class AddressDeletor(util.Listener):
         channels = self.client.get_all_channels()
         for channel in channels:
             if channel.name.lower() == 'godwatch':
-                '_{} removed message: {}, from channel {}._'.format(msg.author.mention, msg.content,
-                                                                    msg.channel.mention)
+                '_{} removed message: {}, from channel {}._'.format(msg.author.mention, msg.content, msg.channel.mention)
                 await self.client.send_message(channel, '_{} removed message: {}, from channel {} because it contained an Ethereum address._'.format(msg.author.mention, msg.content, msg.channel.mention))
         await asyncio.sleep(DELETE_TIME)
         if notice:
             await self.client.delete_message(notice)
         return
+
+
+@util.listenerfinder.register
+class AnnounceTimer(util.Listener):
+    def __init__(self):
+        super().__init__()
+        self._timeout = 60.0 * 60.0 * 3
+        self._announce_channels = ["unikoingold", "random", "crypto-security", "unikoin-gold-ama"]
+        self._should_post = dict()
+        for chan in self._announce_channels:
+            self._should_post[chan] = True
+
+    def is_triggered_message(self, msg: discord.Message):
+            return True
+
+    async def on_start(self):
+        await self._job()
+
+    async def _job(self):
+        message = "Announcement: Do not send any ETH to an address provided to you in discord. The Unikrn team will not "
+        message += "direct message you with an address to send funds or ask you to use any website. Please report any attempt to "
+        message += "do so to a moderator. Thank you."
+        for channel in self.client.get_all_channels():
+            if channel.name in self._announce_channels:
+                if self._should_post[channel.name]:
+                    self._should_post[channel.name] = False
+                    # await self.client.send_message(channel, message)
+        await asyncio.sleep(self._timeout)
+        await self._job()
+
+    async def on_message(self, msg: discord.Message):
+        if msg.channel.name in self._announce_channels:
+            self._should_post[msg.channel.name] = True
