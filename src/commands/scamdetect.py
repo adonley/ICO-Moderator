@@ -163,7 +163,7 @@ class AnnounceTimer(util.Listener):
     async def _job(self):
         message = "Announcement: Do not send any ETH to an address provided to you in discord. The Unikrn team will not "
         message += "direct message you with an address to send funds or ask you to use any website. Report any attempt to "
-        message += "do so to a moderator. Pleaste take time to review the FAQ - https://unikoingold.com/faq and the whitepaper - https://unikoingold.com/whitepaper before asking a mod for help! Thank you."
+        message += "do so to a moderator. Please take time to review the FAQ - https://unikoingold.com/faq and the whitepaper - https://unikoingold.com/whitepaper before asking a mod for help! Thank you."
         for channel in self.client.get_all_channels():
             if channel.name in self._announce_channels:
                 if self._should_post[channel.name]:
