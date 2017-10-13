@@ -148,11 +148,11 @@ class AddressDeletor(util.Listener):
 class AnnounceTimer(util.Listener):
     def __init__(self):
         super().__init__()
-        self._timeout = 60.0 * 60.0 * 3
+        self._timeout = 60.0 * 60.0 * 5
         self._announce_channels = ["unikoingold", "random", "crypto-security", "unikoin-gold-ama"]
-        self._should_post = dict()
+        self._chat_count = dict()
         for chan in self._announce_channels:
-            self._should_post[chan] = True
+            self._chat_count[chan] = 0
 
     def is_triggered_message(self, msg: discord.Message):
             return True
@@ -166,12 +166,13 @@ class AnnounceTimer(util.Listener):
         message += "do so to a moderator. Please take time to review the FAQ - https://unikoingold.com/faq and the whitepaper - https://unikoingold.com/whitepaper before asking a mod for help! Thank you."
         for channel in self.client.get_all_channels():
             if channel.name in self._announce_channels:
-                if self._should_post[channel.name]:
-                    self._should_post[channel.name] = False
+                if self._chat_count[channel.name] > 5:
+                    self._chat_count[channel.name] = 0
                     await self.client.send_message(channel, message)
+
         await asyncio.sleep(self._timeout)
         await self._job()
 
     async def on_message(self, msg: discord.Message):
         if msg.channel.name in self._announce_channels:
-            self._should_post[msg.channel.name] = True
+            self._chat_count[msg.channel.name] += 1
