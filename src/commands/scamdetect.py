@@ -143,7 +143,7 @@ class AddressDeletor(util.Listener):
             await self.client.delete_message(notice)
         return
 
-
+'''
 @util.listenerfinder.register
 class AnnounceTimer(util.Listener):
     def __init__(self):
@@ -176,3 +176,4 @@ class AnnounceTimer(util.Listener):
     async def on_message(self, msg: discord.Message):
         if msg.channel.name in self._announce_channels:
             self._chat_count[msg.channel.name] += 1
+'''
