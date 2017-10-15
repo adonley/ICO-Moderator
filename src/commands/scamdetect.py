@@ -143,12 +143,12 @@ class AddressDeletor(util.Listener):
             await self.client.delete_message(notice)
         return
 
-'''
+
 @util.listenerfinder.register
 class AnnounceTimer(util.Listener):
     def __init__(self):
         super().__init__()
-        self._timeout = 60.0 * 60.0 * 5
+        self._timeout = 60.0 * 60.0 * 8
         self._announce_channels = ["unikoingold", "random", "crypto-security", "unikoin-gold-ama"]
         self._chat_count = dict()
         for chan in self._announce_channels:
@@ -176,4 +176,3 @@ class AnnounceTimer(util.Listener):
     async def on_message(self, msg: discord.Message):
         if msg.channel.name in self._announce_channels:
             self._chat_count[msg.channel.name] += 1
-'''
