@@ -148,7 +148,7 @@ class AddressDeletor(util.Listener):
 class AnnounceTimer(util.Listener):
     def __init__(self):
         super().__init__()
-        self._timeout = 60.0 * 60.0 * 8
+        self._timeout = 60.0 * 60.0 * 14
         self._announce_channels = ["unikoingold", "random", "crypto-security", "unikoin-gold-ama"]
         self._chat_count = dict()
         for chan in self._announce_channels:
@@ -161,9 +161,9 @@ class AnnounceTimer(util.Listener):
         await self._job()
 
     async def _job(self):
-        message = "Announcement: Do not send any ETH to an address provided to you in discord. The Unikrn team will not "
-        message += "direct message you with an address to send funds or ask you to use any website. Report any attempt to "
-        message += "do so to a moderator. Please take time to review the FAQ - https://unikoingold.com/faq and the whitepaper - https://unikoingold.com/whitepaper before asking a mod for help! Thank you."
+        message = "The token sale has ended! We'll be distributing the tokens around the 5th of November. Stay tuned by watching for announcements "
+        message += "here in discord and at unikoingold.com. Remember that the Unikrn staff will never ask you for your private key or password. If you sent your tokens"
+        message += " from an exchange goto https://unikoingold.com/changeaddress. Thanks for participating!"
         for channel in self.client.get_all_channels():
             if channel.name in self._announce_channels:
                 if self._chat_count[channel.name] > 5:
