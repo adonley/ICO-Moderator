@@ -148,7 +148,7 @@ class AddressDeletor(util.Listener):
 class AnnounceTimer(util.Listener):
     def __init__(self):
         super().__init__()
-        self._timeout = 60.0 * 60.0 * 14
+        self._timeout = 60.0 * 60.0 * 16
         self._announce_channels = ["unikoingold", "random", "crypto-security", "unikoin-gold-ama"]
         self._chat_count = dict()
         for chan in self._announce_channels:
@@ -166,7 +166,8 @@ class AnnounceTimer(util.Listener):
         message += " from an exchange goto https://unikoingold.com/changeaddress. Thanks for participating!"
         for channel in self.client.get_all_channels():
             if channel.name in self._announce_channels:
-                if self._chat_count[channel.name] > 5:
+                # 20 messages in the channel
+                if self._chat_count[channel.name] > 20:
                     self._chat_count[channel.name] = 0
                     await self.client.send_message(channel, message)
 
