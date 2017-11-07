@@ -161,9 +161,8 @@ class AnnounceTimer(util.Listener):
         await self._job()
 
     async def _job(self):
-        message = "The token sale has ended! We'll be distributing the tokens around the 5th of November. Stay tuned by watching for announcements "
-        message += "here in discord and at unikoingold.com. Remember that the Unikrn staff will never ask you for your private key or password. If you sent your tokens"
-        message += " from an exchange goto https://unikoingold.com/changeaddress. Thanks for participating!"
+        message = "Stay tuned by watching for announcements here in discord and at unikoingold.com! Remember that" + \
+                  " Unikrn staff will never ask you for your private key or password."
         for channel in self.client.get_all_channels():
             if channel.name in self._announce_channels:
                 # 20 messages in the channel
