@@ -164,7 +164,7 @@ class AnnounceTimer(util.Listener):
         message = "Stay tuned by watching for announcements here in discord and at unikoingold.com! Remember that" + \
                   " Unikrn staff will never ask you for your private key or password."
         for channel in self.client.get_all_channels():
-            if channel.name in self._announce_channels:
+            if channel.name in self._announce_channels and False:
                 # 20 messages in the channel
                 if self._chat_count[channel.name] > 40:
                     self._chat_count[channel.name] = 0
