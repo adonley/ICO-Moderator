@@ -168,7 +168,7 @@ class AnnounceTimer(util.Listener):
                 # 20 messages in the channel
                 if self._chat_count[channel.name] > 40:
                     self._chat_count[channel.name] = 0
-                    await self.client.send_message(channel, message)
+                    # await self.client.send_message(channel, message)
 
         await asyncio.sleep(self._timeout)
         await self._job()
