@@ -21,7 +21,7 @@ ALLOWED_SITES = ["https://unikoingold.com/", "http://unikoingold.com/", "https:/
 REGS = [URL_REGEX, URL_REGEX2, ANY_URL_REGEX, WEB_URL_REGEX, IP_REGEX, STACKOVERFLOW_REGEX]
 
 log = logging.getLogger()
-moderator_roles = ['moderator', 'unikrn staff', 'unikrn admin']
+moderator_roles = ['moderator', 'unikrn staff', 'unikrn admin', 'exchange representative']
 DELETE_TIME = 5
 
 
